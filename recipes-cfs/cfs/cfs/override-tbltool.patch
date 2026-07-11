@@ -1,0 +1,17 @@
+Use TBLTOOL from the environment to run the native elf2cfetbl.
+
+Signed-off-by: Rob Woolley <rob.woolley@windriver.com>
+
+diff --git a/tools/elf2cfetbl/CMakeLists.txt b/tools/elf2cfetbl/CMakeLists.txt
+index 818065d..6d4f9dc 100644
+--- a/tools/elf2cfetbl/CMakeLists.txt
++++ b/tools/elf2cfetbl/CMakeLists.txt
+@@ -13,7 +13,7 @@ add_custom_target(tabletool-execute
+         CC="${CMAKE_C_COMPILER}"
+         CFLAGS="${CMAKE_C_FLAGS}"
+         AR="${CMAKE_AR}"
+-        TBLTOOL="$<TARGET_FILE:elf2cfetbl>"
++        TBLTOOL="elf2cfetbl"
+         cfetables
+     WORKING_DIRECTORY
+         "${MISSION_BINARY_DIR}/tables"
