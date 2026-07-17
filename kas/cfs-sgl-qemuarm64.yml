@@ -1,0 +1,26 @@
+#
+# kas configuration building the NASA Core Flight System (cFS) sample
+# mission on top of the ELISA Space Grade Linux (SGL) scarthgap/qemuarm64
+# configuration.
+#
+# Usage:
+#   kas build meta-aerospace/kas/cfs-sgl-qemuarm64.yml
+#
+header:
+  version: 14
+  includes:
+    - repo: sgl
+      file: kas/sgl-scarthgap-qemuarm64.yml
+
+repos:
+  # This repository (meta-aerospace)
+  meta-aerospace:
+
+  sgl:
+    url: "https://github.com/elisa-tech/meta-sgl.git"
+    branch: "main"
+    path: "layers/meta-sgl"
+
+local_conf_header:
+  cfs: |
+    IMAGE_INSTALL:append = " cfs"
