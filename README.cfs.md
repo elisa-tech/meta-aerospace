@@ -12,14 +12,15 @@ flight software framework (cFE 7 / Draco line, pinned from the `dev` branches).
 | `cfs-native-std-native` | The stock `native_std` build configuration compiled entirely for the build host — useful for running cFS on the build machine and sanity-checking the pinned revisions |
 | `cfs-7.0.1.inc` | Shared metadata: SRC_URI/SRCREV pins for every bundle component and the `setup_sgl_linux` helper that wires the Yocto toolchain into the cFS build |
 
-## Quick start
+## Quick start (with kas, on ELISA Space Grade Linux)
 
 ```sh
-bitbake-layers add-layer meta-aerospace
-bitbake cfs
+git clone <this repo> layers/meta-aerospace
+kas build layers/meta-aerospace/kas/cfs-sgl-qemuarm64.yml
 ```
 
-Add `cfs` to your image; the mission tree installs under `/exe`
+This builds `core-image-minimal` for `qemuarm64` with the `sample`
+mission installed; the mission tree lives under `/exe`
 (`core-cpu1` executable, apps and tables in `cf/`). On the target:
 
 ```sh
