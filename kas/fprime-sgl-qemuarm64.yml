@@ -1,0 +1,25 @@
+#
+# kas configuration building the F Prime Ref deployment on top of the
+# ELISA Space Grade Linux (SGL) scarthgap/qemuarm64 configuration.
+#
+# Usage:
+#   kas build meta-aerospace/kas/fprime-sgl-qemuarm64.yml
+#
+header:
+  version: 14
+  includes:
+    - repo: sgl
+      file: kas/sgl-scarthgap-qemuarm64.yml
+
+repos:
+  # This repository (meta-aerospace)
+  meta-aerospace:
+
+  sgl:
+    url: "https://github.com/elisa-tech/meta-sgl.git"
+    branch: "main"
+    path: "layers/meta-sgl"
+
+local_conf_header:
+  fprime: |
+    IMAGE_INSTALL:append = " fprime-ref"
