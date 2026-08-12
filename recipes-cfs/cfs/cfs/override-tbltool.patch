@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 Use TBLTOOL from the environment to run the native elf2cfetbl.
 
 Signed-off-by: Rob Woolley <rob.woolley@windriver.com>

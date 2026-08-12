@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "A command-line utility that creates projects from project templates"
 HOMEPAGE = "https://github.com/cookiecutter/cookiecutter"
 LICENSE = "BSD-3-Clause"

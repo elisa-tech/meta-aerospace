@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: MIT
+---
+name: Lint
+
+"on": [push]
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          persist-credentials: false
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+
+      - name: Load super-linter configuration
+        # Use grep inverse matching to exclude eventual comments in the .env file
+        # because the GitHub Actions command to set environment variables doesn't
+        # support comments.
+        # Ref: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-an-environment-variable
+        run: grep -v '^#' .github/super-linter.env >> "$GITHUB_ENV"
+
+      - name: Super-linter
+        uses: super-linter/super-linter@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
+        env:
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # DISABLE_ERRORS: true # This line makes the linting warn and not fail

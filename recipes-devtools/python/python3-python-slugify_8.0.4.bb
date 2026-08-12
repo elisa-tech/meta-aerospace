@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "A Python slugify application that handles unicode"
 HOMEPAGE = "https://github.com/un33k/python-slugify"
 LICENSE = "MIT"

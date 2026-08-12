@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "F Prime reference deployment (Ref)"
 DESCRIPTION = "Builds the Ref reference deployment from the NASA F Prime flight software \
 framework. The F Prime framework is built in-tree, as is standard for F Prime deployments; \
