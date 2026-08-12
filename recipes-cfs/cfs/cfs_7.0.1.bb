@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 require ${BPN}-${PV}.inc
 
 SRC_URI += "file://override-tbltool.patch"

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 require cfs-${PV}.inc
 
 inherit cmake native

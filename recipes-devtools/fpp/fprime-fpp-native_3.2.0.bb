@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "F Prime Prime (FPP) modeling language tools"
 DESCRIPTION = "The FPP autocoder tool suite (fpp-depend, fpp-to-cpp, fpp-to-dict, ...) \
 required at build time by the F Prime flight software framework. The tools are written \

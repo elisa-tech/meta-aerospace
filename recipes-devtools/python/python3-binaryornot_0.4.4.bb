@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "Ultra-lightweight pure Python package to check if a file is binary or text"
 HOMEPAGE = "https://github.com/audreyfeldroy/binaryornot"
 LICENSE = "BSD-3-Clause"

@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: MIT
+-->
+
 # NASA F Prime
 
 OpenEmbedded/Yocto recipes for the [NASA F Prime](https://github.com/nasa/fprime)

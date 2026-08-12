@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: MIT
+-->
+
 # NASA Core Flight System (cFS)
 
 OpenEmbedded/Yocto recipes for the [NASA Core Flight System](https://github.com/nasa/cFS)
@@ -32,6 +36,7 @@ pip3 install kas
 ### Disk space and build time
 
 A full build (from source, no sstate cache) requires approximately:
+
 - **17 GB** disk space (9 GB build artifacts, 5.5 GB download cache, 1.5 GB sstate cache, 0.5 GB layer sources)
 - **30–90 minutes** on a modern multi-core machine (first build)
 - Subsequent builds with sstate cache hit complete in under a minute
@@ -89,7 +94,7 @@ cd /exe/cpu1 && ./core-cpu1
 
 You should see cFE startup messages including:
 
-```
+```text
 CFE_PSP: Starting the cFE with a POWER ON reset.
 ...
 cFE ES Initialized: CFE_ES v7.0.1+dev1 (Draco)
@@ -108,25 +113,30 @@ The image includes `cmdUtil`, a command-line UDP tool for sending cFS
 commands to running apps. To exercise the sample app:
 
 1. Start cFS as a background process:
+
    ```sh
    cd /exe/cpu1
    ./core-cpu1 > /tmp/cfs.log 2>&1 &
    ```
 
 2. Verify cFS started (Ctrl-C to stop tailing):
+
    ```sh
    tail -f /tmp/cfs.log
    ```
 
 3. Send a NO-OP command to Sample App:
+
    ```sh
    ./cmdUtil --host=localhost --port=1234 --pktid=0x1882 --cmdcode=0
    ```
 
 4. Confirm the command was received:
+
    ```sh
    tail /tmp/cfs.log
    ```
+
    You should see Sample App report receiving a NO-OP command.
 
 ## Verifying the build

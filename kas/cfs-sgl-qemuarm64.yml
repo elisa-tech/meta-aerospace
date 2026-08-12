@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 #
 # kas configuration building the NASA Core Flight System (cFS) sample
 # mission on top of the ELISA Space Grade Linux (SGL) scarthgap/qemuarm64

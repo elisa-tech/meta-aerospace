@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "F Prime flight software framework build helper (fprime-util)"
 DESCRIPTION = "Provides the fprime-util and fprime-version-check entry points and the \
 fprime.fbuild Python package, all required at build time by the F Prime CMake system."

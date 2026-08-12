@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "The most basic Text::Unidecode port"
 HOMEPAGE = "https://github.com/kmike/text-unidecode"
 LICENSE = "Artistic-1.0"

@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: MIT
+-->
+
 # meta-aerospace
 
 An OpenEmbedded/Yocto layer providing recipes for open-source aerospace
@@ -53,10 +57,10 @@ The SGL reference distribution lives at
 
 ## Dependencies
 
-  URI: https://github.com/openembedded/openembedded-core.git
+  URI: <https://github.com/openembedded/openembedded-core.git>
   branch: scarthgap
 
-  URI: https://github.com/openembedded/meta-openembedded.git (meta-python)
+  URI: <https://github.com/openembedded/meta-openembedded.git> (meta-python)
   branch: scarthgap
 
 The layer is compatible with Yocto scarthgap (5.0).  the kas
@@ -66,9 +70,10 @@ configurations above pull in everything required via SGL.
 
 Run 'bitbake-layers add-layer meta-aerospace'
 
-## Patches
+## Contributing
 
-Please submit any patches against the meta-aerospace layer to the
-maintainer:
+Please see [Contributing.md](Contributing.md) for guidelines on
+submitting patches, signing off commits, and the project's development
+workflow.
 
 Maintainer: Rob Woolley <rob.woolley@windriver.com>
