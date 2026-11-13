@@ -17,7 +17,7 @@ repos:
   meta-aerospace:
 
   sgl:
-    url: "https://github.com/elisa-tech/meta-sgl.git"
+    url: "https://github.com/space-grade-linux/meta-sgl.git"
     branch: "main"
     path: "layers/meta-sgl"
 
