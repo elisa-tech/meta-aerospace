@@ -74,6 +74,8 @@ After a successful build, the image is in `build/tmp-glibc/deploy/images/qemuarm
 kas shell layers/meta-aerospace/kas/cfs-sgl-qemuarm64.yml -c "runqemu nographic"
 ```
 
+To stop the qemu session press `CTRL+a` then `x`.
+
 ### Manually with qemu-system-aarch64
 
 ```sh
@@ -179,10 +181,16 @@ Expected output: `cfs cortexa57 7.*`
   `MISSIONCONFIG=sample` and `CFE_EDS_ENABLE=OFF` and builds only the two
   host tools.
 - **SGL + clang** — the kas configuration builds on top of the
-  [Space Grade Linux](https://github.com/elisa-tech/meta-sgl) distro
+  [Space Grade Linux](https://github.com/space-grade-linux/meta-sgl) distro
   with the [meta-clang](https://github.com/kraj/meta-clang) toolchain.
   This is the default; for a vanilla OE/poky build, you would need a
   custom kas config or manual layer setup.
+
+## Build cFS with the Yocto SDK
+
+You can also use the Yocto SDK to build the cFS and develop independently from
+bitbake and the Yocto build system. The steps to generate the Yocto SDK and
+configure cFS to build with the SDK toolchain are described in [README.sdk.md](docs/README.sdk.md).
 
 ## Building your own mission
 
