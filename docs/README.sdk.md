@@ -1,14 +1,18 @@
-# Quick Start Guide: Building NASA cFS with a Yocto SDK (RISC-V 64)
+<!--
+SPDX-License-Identifier: MIT
+-->
 
-This guide walks through generating a Yocto SDK using `kas` for a RISC-V 64
-target (`qemuriscv64`), installing the SDK, and configuring NASA Core File
-System (cFS) to build against the SDK toolchain.
+# Quick Start Guide: Building NASA cFS with a Yocto SDK
+
+This guide walks through generating a Yocto SDK using `kas` for a qemu target
+(`qemuarm64` or `qemuriscv64`), installing the SDK, and configuring NASA Core
+File System (cFS) to build against the SDK toolchain.
 
 ---
 
 ## Prerequisites & Setup
 
-### 1. Create the Workspace Directory
+###  Create the Workspace Directory
 
 Prepare a clean working directory for the `meta-aerospace` project.
 
@@ -18,7 +22,32 @@ cd ~/aerospace-wg
 
 ```
 
-### 2. Clone the `meta-aerospace` Layer
+### Host packages & tools (Debian/Ubuntu)
+
+If not already done, install the [Yocto Project required host packages](https://docs.yoctoproject.org/ref-manual/system-requirements.html#required-packages-for-the-build-host) and `kas`.
+
+```sh
+sudo apt install -y gawk wget git diffstat unzip texinfo gcc build-essential \
+    chrpath socat cpio python3 python3-pip python3-pexpect xz-utils \
+    debianutils iputils-ping python3-git python3-jinja2 python3-subunit \
+    zstd liblz4-tool file locales libacl1
+```
+
+Generate `en_US.UTF-8` locales as needed by the Yocto project.
+
+```sh
+sudo dpkg-reconfigure locales
+```
+
+Create and activate an isolated Python virtual environment to install `kas`:
+
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip3 install kas
+```
+
+### Clone the `meta-aerospace` Layer
 
 Fetch the `meta-aerospace` repository which contains the Kas configuration files.
 
@@ -30,73 +59,40 @@ cd meta-aerospace
 
 ---
 
-## Configuration & Environment Setup
+### Choose or create the target configuration file
 
-### 3. Create the Target Configuration File (only for targets other than ARM, like RISC)
+The directory `kas/` contains the existing target configurations. If your planned target isn't available,
+copy an existing Kas configuration file to create a new target build configuration.
 
-Copy an existing Kas configuration file to create a target build configuration for `qemuriscv64`.
+As an example:
 
 ```bash
 cd kas
-cp cfs-sgl-qemuarm64.yml cfs-sgl-qemuriscv64.yml
-vim cfs-sgl-qemuriscv64.yml
-cfs-sgl-qemuarm64.yml
-fprime-sgl-qemuarm64.yml
-cd ../..
+cp cfs-sgl-qemuriscv64.yml cfs-sgl-beaglev-fire.yml
+vim cfs-sgl-beaglev-fire.yml
+cd ~/aerospace-wg
 
 ```
+*Modify `cfs-sgl-beaglev-fire.yml` as needed for the RISC-V 64 architecture parameters.*
 
-*Modify `cfs-sgl-qemuriscv64.yml` as needed for the RISC-V 64 architecture parameters.*
-
-### 4. Set Up the Python Virtual Environment
-
-Create and activate a isolated Python virtual environment to manage build dependencies like `kas`.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-
-```
-
-### 5. Initialize the Kas Build Workspace
-
-Prepare the Kas workspace directory and export the location for the build output.
-
-```bash
-mkdir -p cfs-sgl-qemuriscv64
-export KAS_WORK_DIR=$PWD/cfs-sgl-qemuriscv64
-
-mkdir -p cfs-sgl-qemuarm64
-export KAS_WORK_DIR=$PWD/cfs-sgl-qemuarm64
-
-```
 
 ---
 
 ## Yocto Image & SDK Build
 
-### 6. Checkout and Shell Entry via Kas
+### Build the Minimal Image
 
-Use Kas to checkout the specified configuration layer and drop into the OpenEmbedded build environment.
+Use Kas to checkout the specified configuration layer and drop into the
+OpenEmbedded build environment.  This will put you in the build directory with
+$BUILDDIR set so you can run `bitbake` commands.
 
 ```bash
+cd ~/aerospace-wg/
 kas checkout meta-aerospace/kas/cfs-sgl-qemuriscv64.yml
 kas shell meta-aerospace/kas/cfs-sgl-qemuriscv64.yml
-
-kas checkout meta-aerospace/kas/cfs-sgl-qemuarm64.yml
-kas shell meta-aerospace/kas/cfs-sgl-qemuarm64.yml
-
 ```
 
-sudo sed -i 's/# \(en_US.UTF-8\)/\1/' /etc/locale.gen
-sudo /usr/sbin/locale-gen
-sudo apt-get install zstd lz4 chrpath diffstat gawk cpio
-
-### 7. Build the Minimal Image
-
 Compile the baseline Yocto image for the RISC-V target.
-
-This will put you in the build directory with $BUILDDIR set so you can run bitbake -c build core-image-minimal
 
 ```bash
 bitbake --dry-run core-image-minimal
@@ -104,7 +100,9 @@ bitbake core-image-minimal
 
 ```
 
-### 8. Generate the Cross-Development SDK
+This produces the image for the target in the build/tmp-glibc/deploy/images/qemuriscv64/.
+
+### Generate the Cross-Development SDK
 
 Populate and export the standalone target SDK installer script.
 
@@ -114,23 +112,25 @@ bitbake core-image-minimal -c populate_sdk
 
 ```
 
+This produces the SDK for the target in build/tmp-glibc/deploy/sdk/qemuriscv64/.
+
+
 ---
 
 ## SDK Installation
 
-### 9. Install the Target SDK
+### Install the Target SDK
 
-Execute the self-extracting SDK installer script into your designated target directory.
+Execute the self-extracting SDK installer script into your designated target directory (here: ~/sgl-sdk).
 
 ```bash
-# Path target example: ~/sgl-sdk
 cd $BUILDDIR
+
 # Check target files are present:
-ls tmp-glibc/deploy/sdk/, check for the file present
+ls tmp-glibc/deploy/sdk/
+
 # Do the actual action:
 tmp-glibc/deploy/sdk/sgl-glibc-x86_64-core-image-minimal-riscv64-qemuriscv64-toolchain-0.1.sh -d ~/sgl-sdk -y
-
-tmp-glibc/deploy/sdk/sgl-glibc-aarch64-core-image-minimal-cortexa57-qemuarm64-toolchain-0.1.sh -d ~/sgl-sdk -y
 
 ```
 
@@ -140,7 +140,7 @@ tmp-glibc/deploy/sdk/sgl-glibc-aarch64-core-image-minimal-cortexa57-qemuarm64-to
 
 ### 10. Prepare the cFS Workspace
 
-Starting from here, these commands could run in a new shell, as these are based onm the SDK just created.
+Starting from here, these commands should run in a new shell, as these are based on the SDK just created.
 This is the preferred way!
 
 Create a separate workspace directory to clone and compile NASA cFS.
