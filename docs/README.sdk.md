@@ -28,9 +28,9 @@ If not already done, install the [Yocto Project required host packages](https://
 
 ```sh
 sudo apt install -y gawk wget git diffstat unzip texinfo gcc build-essential \
-    chrpath socat cpio python3 python3-pip python3-pexpect xz-utils \
+    chrpath socat cpio python3 python3-pip python3-pexpect python3-venv \
     debianutils iputils-ping python3-git python3-jinja2 python3-subunit \
-    zstd liblz4-tool file locales libacl1
+    zstd lz4 file locales libacl1 xz-utils
 ```
 
 Generate `en_US.UTF-8` locales as needed by the Yocto project.
@@ -84,7 +84,7 @@ cd ~/aerospace-wg
 
 Use Kas to checkout the specified configuration layer and drop into the
 OpenEmbedded build environment.  This will put you in the build directory with
-$BUILDDIR set so you can run `bitbake` commands.
+`$BUILDDIR` set so you can run `bitbake` commands.
 
 ```bash
 cd ~/aerospace-wg/
@@ -95,7 +95,10 @@ kas shell meta-aerospace/kas/cfs-sgl-qemuriscv64.yml
 Compile the baseline Yocto image for the RISC-V target.
 
 ```bash
+# check
 bitbake --dry-run core-image-minimal
+
+# run build
 bitbake core-image-minimal
 
 ```
@@ -104,7 +107,9 @@ This produces the image for the target in the build/tmp-glibc/deploy/images/qemu
 
 ### Generate the Cross-Development SDK
 
-Populate and export the standalone target SDK installer script.
+The `populate_sdk` task creates a self-extracting SDK installer script. The script
+contains the cross toolchain together with a sysroot that matches the image you
+just built.
 
 ```bash
 bitbake --dry-run core-image-minimal -c populate_sdk
@@ -112,8 +117,7 @@ bitbake core-image-minimal -c populate_sdk
 
 ```
 
-This produces the SDK for the target in build/tmp-glibc/deploy/sdk/qemuriscv64/.
-
+The installer is written to `~/aerospace-wg/build/tmp-glibc/deploy/sdk/`.
 
 ---
 
@@ -121,16 +125,20 @@ This produces the SDK for the target in build/tmp-glibc/deploy/sdk/qemuriscv64/.
 
 ### Install the Target SDK
 
-Execute the self-extracting SDK installer script into your designated target directory (here: ~/sgl-sdk).
+Leave the kas shell (`exit`) or open a new shell. You can also copy the
+installer to another machine and install the SDK there; that machine does not
+need any of the Yocto build tools.
+
+Execute the self-extracting SDK installer script to install into your designated target directory (here: ~/sgl-sdk).
 
 ```bash
-cd $BUILDDIR
+cd ~/aerospace-wg/
 
-# Check target files are present:
-ls tmp-glibc/deploy/sdk/
+# Check if target files are present:
+ls ~/aerospace-wg/build/tmp-glibc/deploy/sdk/
 
 # Do the actual action:
-tmp-glibc/deploy/sdk/sgl-glibc-x86_64-core-image-minimal-riscv64-qemuriscv64-toolchain-0.1.sh -d ~/sgl-sdk -y
+~/aerospace-wg/build/tmp-glibc/deploy/sdk/sgl-glibc-x86_64-core-image-minimal-riscv64-qemuriscv64-toolchain-0.1.sh -d ~/sgl-sdk -y
 
 ```
 
@@ -138,7 +146,7 @@ tmp-glibc/deploy/sdk/sgl-glibc-x86_64-core-image-minimal-riscv64-qemuriscv64-too
 
 ## NASA cFS Setup & Toolchain Configuration
 
-### 10. Prepare the cFS Workspace
+### Prepare the cFS Workspace
 
 Starting from here, these commands should run in a new shell, as these are based on the SDK just created.
 This is the preferred way!
@@ -162,54 +170,66 @@ git clone https://github.com/nasa/cFS.git
 cd cFS
 git submodule init
 git submodule update
-
 ```
 
 ### 12. Configure Architecture and Target Toolchain Settings
 
-Update `target-configs.mk` and create custom CMake definitions matching your Yocto SDK properties.
+Update `target-configs.mk` in `~/sgl-cfs-workspace/cFS/` and create custom
+CMake definitions matching your Yocto SDK properties.
 
 1. **Set target architecture** in `target-configs.mk`:
-* Set architecture target to `ARCH_qemu_yocto_linux`
-* Set tuple/variant to `riscv64-sgl-linux`
 
-Example: For aarch64 change:
-target-configs.mk
+| Variable | Value |
+| --- | --- |
+| `ARCH_qemu_yocto_linux` | `riscv64-sgl-linux` |
+
+1.a. **Set system architecture** in `sample_defs/targets.cmake`:
+
+| Variable | Value | complete line |
+| --- | --- | --- |
+| `cpu1_SYSTEM` | `riscv64-sgl-linux` | `SET(cpu1_SYSTEM riscv64-sgl-linux)`  |
+| `cpu2_SYSTEM` | `riscv64-sgl-linux` | `SET(cpu2_SYSTEM riscv64-sgl-linux)`  |
+
 
 
 2. **Create custom toolchain definition:**
+
 ```bash
 cp sample_defs/toolchain-riscv64-poky-linux.cmake sample_defs/toolchain-riscv64-sgl-linux.cmake
 
-
-cp sample_defs/toolchain-aarch64-poky-linux.cmake sample_defs/toolchain-aarch64-sgl-linux.cmake
 ```
 
 
 3. **Update `sample_defs/toolchain-riscv64-sgl-linux.cmake` with the following variables:**
+
 | Variable | Value |
 | --- | --- |
-| `POKY_SYSROOT_ID` | `aarch64-sgl-linux` |
+| `POKY_SYSROOT_ID` | `riscv64-sgl-linux` |
 | `TOOLCHAIN_TOP` | `~/sgl-sdk` *(Absolute path to installed SDK)* |
-| `SDKHOSTBINDIR` | `${TOOLCHAIN_TOP}/sysroots/aarch64-sglsdk-linux/usr/bin/${CMAKE_SYSTEM_PROCESSOR}-sgl-linux` |
+| `SDKHOSTBINDIR` | `${TOOLCHAIN_TOP}/sysroots/x86_64-sglsdk-linux/usr/bin/${CMAKE_SYSTEM_PROCESSOR}-sgl-linux` |
 | `TARGETPREFIX` | `${CMAKE_SYSTEM_PROCESSOR}-sgl-linux-` |
 
 
 4. **Copy OS configuration file:**
+
 ```bash
 cp ./sample_defs/riscv64-poky-linux_osconfig.cmake ./sample_defs/riscv64-sgl-linux_osconfig.cmake
 
-cp ./sample_defs/aarch64-poky-linux_osconfig.cmake ./sample_defs/aarch64-sgl-linux_osconfig.cmake
-
 ```
-
-
 
 ---
 
 ## Building and Verification
 
 ### 13. Prepare, Compile, and Install cFS
+
+In case you're not building on the same machine as the SDK where created on,
+install necessary packages:
+
+```bash
+sudo apt install make cmake
+
+```
 
 Run the native cFS make sequence targets configured for the Yocto Linux target.
 
@@ -222,7 +242,7 @@ make qemu_yocto_linux.install
 
 Notes:
 - You don't have to compile separately. Install calls compile.
-- You can compile (or install) with -j$(nproc). It should be faster.
+- You can compile (or install) with `-j$(nproc)`. It should be faster.
 
 ### 14. Verify Compiled Executables
 
@@ -236,12 +256,35 @@ file build-qemu_yocto_linux/exe/host/*
 
 ### 15. Verify principal Functionality
 
-If you go into the folder build-qemu_yocto_linux/exe/cpu, run the command to see if all is working as sudo:
-> sudo ./core-cpu1
+Using the native and target sysroots in the SDK, the target binaries can be run:
 
-Open a second shell to send a NOOOP command lie, this:
-Change to the folder build-qemu_yocto_linux/exe/host/, run
-> ./cmd_send --pktid=0x1882 --pktfc=0
+```bash
+# set the environment
+source ~/sdk-sgl/environment-setup-riscv64-sgl-linux
+
+# change into the exe/cpu1 directory
+cd ~/sgl-cfs-workspace/cFS/build-qemu_yocto_linux/exe/cpu1/
+
+# run the core-cpu1
+
+sudo "$OECORE_NATIVE_SYSROOT/usr/bin/qemu-riscv64" -L "$OECORE_TARGET_SYSROOT"  ./core-cpu1
+```
+
+Open a second shell to send a NOOP command like this:
+
+Change to the folder `build-qemu_yocto_linux/exe/host/`, run
+
+```bash
+# change directory
+cd ~/sgl-cfs-workspace/cFS/build-qemu_yocto_linux/exe/host/
+
+# Send a command
+./cmd_send --pktid=0x1882 --pktfc=0
+
+```
 
 Expected output should include SAMPLE: NOOP command, similar to:
+
+```text
 EVS Port1 1980-012-14:08:44.50306 66/1/SAMPLE_APP 3: SAMPLE: NOOP command v7.0.0+dev1
+```
