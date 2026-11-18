@@ -260,7 +260,7 @@ Using the native and target sysroots in the SDK, the target binaries can be run:
 
 ```bash
 # set the environment
-source ~/sdk-sgl/environment-setup-riscv64-sgl-linux
+source ~/sgl-sdk/environment-setup-riscv64-sgl-linux
 
 # change into the exe/cpu1 directory
 cd ~/sgl-cfs-workspace/cFS/build-qemu_yocto_linux/exe/cpu1/
