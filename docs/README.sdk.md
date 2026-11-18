@@ -12,7 +12,7 @@ File System (cFS) to build against the SDK toolchain.
 
 ## Prerequisites & Setup
 
-###  Create the Workspace Directory
+### Create the Workspace Directory
 
 Prepare a clean working directory for the `meta-aerospace` project.
 
