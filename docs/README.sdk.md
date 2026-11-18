@@ -286,5 +286,5 @@ cd ~/sgl-cfs-workspace/cFS/build-qemu_yocto_linux/exe/host/
 Expected output should include SAMPLE: NOOP command, similar to:
 
 ```text
-EVS Port1 1980-012-14:08:44.50306 66/1/SAMPLE_APP 3: SAMPLE: NOOP command v7.0.0+dev1
+EVS Port1 1980-012-14:08:44.50306 66/1/SAMPLE_APP 3: SAMPLE: NOOP command v<cFS version>
 ```
