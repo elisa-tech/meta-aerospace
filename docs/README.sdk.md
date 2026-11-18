@@ -30,7 +30,7 @@ If not already done, install the [Yocto Project required host packages](https://
 sudo apt install -y gawk wget git diffstat unzip texinfo gcc build-essential \
     chrpath socat cpio python3 python3-pip python3-pexpect python3-venv \
     debianutils iputils-ping python3-git python3-jinja2 python3-subunit \
-    zstd lz4 file locales libacl1 xz-utils
+    zstd lz4 file locales libacl1 xz-utils rpcsvc-proto
 ```
 
 Generate `en_US.UTF-8` locales as needed by the Yocto project.
